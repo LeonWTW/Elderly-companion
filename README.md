@@ -248,5 +248,3 @@ It is meant for personal tracking and informational purposes only.
 
 This project was built with assistance from:
 - **Claude Opus 4.5** (Anthropic) — code, debugging, structure  
-- **ChatGPT 5.1** (OpenAI) — prompts, UX text  
-- **OpenAI gpt‑3.5‑turbo API** — in‑app cognitive analysis
