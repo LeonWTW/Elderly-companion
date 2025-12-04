@@ -1,0 +1,3 @@
+"""
+Elderly Companion Backend Package
+"""

@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI Elderly Companion - Daily cognitive health tracking for caregivers">
+    <title>Elderly Companion - Cognitive Health Tracker</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;500;600;700&family=Crimson+Pro:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body class="font-size-medium">
+    <div class="app-container">
+        <!-- Skip to main content for accessibility -->
+        <a href="#main-content" class="skip-link">Skip to main content</a>
+
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon" aria-hidden="true">🏠</span>
+                    <h1>Elderly Companion</h1>
+                </div>
+                <p class="tagline">Daily cognitive health observations for caregivers</p>
+            </div>
+            
+            <!-- Accessibility Controls -->
+            <div class="accessibility-controls">
+                <div class="font-size-toggle" role="group" aria-label="Font size controls">
+                    <span class="toggle-label">Font Size:</span>
+                    <button type="button" class="font-btn" data-size="small" aria-label="Small font" title="Small font">A</button>
+                    <button type="button" class="font-btn active" data-size="medium" aria-label="Medium font" title="Medium font">A</button>
+                    <button type="button" class="font-btn" data-size="large" aria-label="Large font" title="Large font">A</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Global Error Message Area -->
+        <div id="global-error" class="global-error" role="alert" aria-live="polite" hidden>
+            <span class="error-icon" aria-hidden="true">⚠️</span>
+            <span class="error-text"></span>
+            <button type="button" class="error-dismiss" aria-label="Dismiss error">×</button>
+        </div>
+
+        <!-- Global Success Message Area -->
+        <div id="global-success" class="global-success" role="status" aria-live="polite" hidden>
+            <span class="success-icon" aria-hidden="true">✓</span>
+            <span class="success-text"></span>
+            <button type="button" class="success-dismiss" aria-label="Dismiss message">×</button>
+        </div>
+
+        <!-- Disclaimer Banner -->
+        <div class="disclaimer-banner" role="alert">
+            <span class="disclaimer-icon" aria-hidden="true">ℹ️</span>
+            <p><strong>Important:</strong> This tool is for personal tracking only and does not provide medical diagnosis. Please consult a healthcare professional for any concerns about cognitive health.</p>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content" id="main-content">
+            <!-- Left Column: Forms -->
+            <div class="forms-column">
+                
+                <!-- Elder Profile Section -->
+                <section class="card profile-section" aria-labelledby="profile-heading">
+                    <div class="card-header">
+                        <h2 id="profile-heading">
+                            <span aria-hidden="true">👤</span> Elder Profile
+                        </h2>
+                        <button type="button" class="btn-toggle" id="toggle-profile" aria-expanded="false" aria-controls="profile-form-container">
+                            <span class="toggle-icon" aria-hidden="true">▼</span>
+                            <span class="visually-hidden">Toggle profile form</span>
+                        </button>
+                    </div>
+                    
+                    <div class="card-body collapsible" id="profile-form-container">
+                        <form id="profile-form" novalidate>
+                            <!-- Profile Loading State -->
+                            <div id="profile-loading" class="loading-overlay" hidden>
+                                <div class="spinner-container">
+                                    <span class="spinner" aria-hidden="true"></span>
+                                    <span>Loading profile...</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="profile-name">Name</label>
+                                <input type="text" id="profile-name" name="name" placeholder="e.g., John Doe" maxlength="100" autocomplete="name">
+                                <span class="field-error" id="profile-name-error" role="alert"></span>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="profile-age">Age</label>
+                                    <input type="number" id="profile-age" name="age" min="1" max="150" placeholder="e.g., 78" inputmode="numeric">
+                                    <span class="field-error" id="profile-age-error" role="alert"></span>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="profile-education">Years of Education</label>
+                                    <input type="number" id="profile-education" name="education_years" min="0" max="30" placeholder="e.g., 12" inputmode="numeric">
+                                    <span class="form-hint">Optional</span>
+                                    <span class="field-error" id="profile-education-error" role="alert"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="profile-diagnosis">Known Diagnosis / Notes</label>
+                                <textarea id="profile-diagnosis" name="diagnosis_notes" rows="2" placeholder="e.g., No diagnosis yet, mild memory issues..." maxlength="500"></textarea>
+                                <span class="form-hint">Optional - any existing medical notes</span>
+                            </div>
+                            
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary" id="save-profile-btn">
+                                    <span class="btn-text">Save Profile</span>
+                                    <span class="btn-loading" hidden>
+                                        <span class="spinner spinner-small" aria-hidden="true"></span>
+                                        Saving...
+                                    </span>
+                                </button>
+                            </div>
+                            
+                            <div id="profile-message" class="message" role="status" aria-live="polite" hidden></div>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- Daily Check-in Section -->
+                <section class="card checkin-section" aria-labelledby="checkin-heading">
+                    <div class="card-header">
+                        <h2 id="checkin-heading">
+                            <span aria-hidden="true">📋</span> Daily Check-in
+                        </h2>
+                    </div>
+                    
+                    <div class="card-body">
+                        <form id="checkin-form" novalidate>
+                            <div class="form-group">
+                                <label for="checkin-date">Date <span class="required" aria-hidden="true">*</span></label>
+                                <input type="date" id="checkin-date" name="date" required aria-required="true">
+                                <span class="field-error" id="checkin-date-error" role="alert"></span>
+                            </div>
+                            
+                            <!-- Memory Score -->
+                            <fieldset class="form-group score-group">
+                                <legend>Memory Today <span class="required" aria-hidden="true">*</span></legend>
+                                <p class="score-description">Compared to their usual baseline</p>
+                                <div class="score-buttons" id="memory-score-buttons" role="radiogroup" aria-required="true">
+                                    <button type="button" class="score-btn" data-value="1" role="radio" aria-checked="false" title="Much worse than usual">
+                                        <span class="score-value">1</span>
+                                        <span class="score-label">Much Worse</span>
+                                    </button>
+                                    <button type="button" class="score-btn" data-value="2" role="radio" aria-checked="false" title="Somewhat worse than usual">
+                                        <span class="score-value">2</span>
+                                        <span class="score-label">Worse</span>
+                                    </button>
+                                    <button type="button" class="score-btn" data-value="3" role="radio" aria-checked="false" title="About usual">
+                                        <span class="score-value">3</span>
+                                        <span class="score-label">Usual</span>
+                                    </button>
+                                    <button type="button" class="score-btn" data-value="4" role="radio" aria-checked="false" title="Somewhat better than usual">
+                                        <span class="score-value">4</span>
+                                        <span class="score-label">Better</span>
+                                    </button>
+                                    <button type="button" class="score-btn" data-value="5" role="radio" aria-checked="false" title="Much better than usual">
+                                        <span class="score-value">5</span>
+                                        <span class="score-label">Much Better</span>
+                                    </button>
+                                </div>
+                                <input type="hidden" id="memory-score" name="memory_score" required>
+                                <span class="field-error" id="memory-score-error" role="alert"></span>
+                            </fieldset>
+                            
+                            <!-- Orientation Score -->
+                            <fieldset class="form-group score-group">
+                                <legend>Orientation (Time/Place) <span class="required" aria-hidden="true">*</span></legend>
+                                <p class="score-description">Awareness of day, time, and surroundings</p>
+                                <div class="score-buttons" id="orientation-score-buttons" role="radiogroup" aria-required="true">
+                                    <button type="button" class="score-btn" data-value="1" role="radio" aria-checked="false">
+                                        <span class="score-value">1</span>
+                                        <span class="score-label">Much Worse</span>
+                                    </button>
+                                    <button type="button" class="score-btn" data-value="2" role="radio" aria-checked="false">
+                                        <span class="score-value">2</span>
+                                        <span class="score-label">Worse</span>
+                                    </button>
+                                    <button type="button" class="score-btn" data-value="3" role="radio" aria-checked="false">
+                                        <span class="score-value">3</span>
+                                        <span class="score-label">Usual</span>
+                                    </button>
+                                    <button type="button" class="score-btn" data-value="4" role="radio" aria-checked="false">
+                                        <span class="score-value">4</span>
+                                        <span class="score-label">Better</span>
+                                    </button>
+                                    <button type="button" class="score-btn" data-value="5" role="radio" aria-checked="false">
+                                        <span class="score-value">5</span>
+                                        <span class="score-label">Much Better</span>
+                                    </button>
+                                </div>
+                                <input type="hidden" id="orientation-score" name="orientation_score" required>
+                                <span class="field-error" id="orientation-score-error" role="alert"></span>
+                            </fieldset>
+                            
+                            <!-- Activities Score -->
+                            <fieldset class="form-group score-group">
+                                <legend>Daily Activities <span class="required" aria-hidden="true">*</span></legend>
+                                <p class="score-description">Managing routine tasks and self-care</p>
+                                <div class="score-buttons" id="activities-score-buttons" role="radiogroup" aria-required="true">
+                                    <button type="button" class="score-btn" data-value="1" role="radio" aria-checked="false">
+                                        <span class="score-value">1</span>
+                                        <span class="score-label">Much Worse</span>
+                                    </button>
+                                    <button type="button" class="score-btn" data-value="2" role="radio" aria-checked="false">
+                                        <span class="score-value">2</span>
+                                        <span class="score-label">Worse</span>
+                                    </button>
+                                    <button type="button" class="score-btn" data-value="3" role="radio" aria-checked="false">
+                                        <span class="score-value">3</span>
+                                        <span class="score-label">Usual</span>
+                                    </button>
+                                    <button type="button" class="score-btn" data-value="4" role="radio" aria-checked="false">
+                                        <span class="score-value">4</span>
+                                        <span class="score-label">Better</span>
+                                    </button>
+                                    <button type="button" class="score-btn" data-value="5" role="radio" aria-checked="false">
+                                        <span class="score-value">5</span>
+                                        <span class="score-label">Much Better</span>
+                                    </button>
+                                </div>
+                                <input type="hidden" id="activities-score" name="activities_score" required>
+                                <span class="field-error" id="activities-score-error" role="alert"></span>
+                            </fieldset>
+                            
+                            <!-- Mood -->
+                            <fieldset class="form-group">
+                                <legend>Mood <span class="required" aria-hidden="true">*</span></legend>
+                                <div class="mood-buttons" id="mood-buttons" role="radiogroup" aria-required="true">
+                                    <button type="button" class="mood-btn" data-value="Good" role="radio" aria-checked="false">
+                                        <span class="mood-icon" aria-hidden="true">😊</span>
+                                        <span class="mood-label">Good</span>
+                                    </button>
+                                    <button type="button" class="mood-btn" data-value="OK" role="radio" aria-checked="false">
+                                        <span class="mood-icon" aria-hidden="true">😐</span>
+                                        <span class="mood-label">OK</span>
+                                    </button>
+                                    <button type="button" class="mood-btn" data-value="Low" role="radio" aria-checked="false">
+                                        <span class="mood-icon" aria-hidden="true">😔</span>
+                                        <span class="mood-label">Low</span>
+                                    </button>
+                                </div>
+                                <input type="hidden" id="mood" name="mood" required>
+                                <span class="field-error" id="mood-error" role="alert"></span>
+                            </fieldset>
+                            
+                            <!-- Notes -->
+                            <div class="form-group">
+                                <label for="checkin-notes">Additional Notes</label>
+                                <textarea id="checkin-notes" name="notes" rows="3" placeholder="e.g., Forgot an appointment, repeated same question, seemed confused about the date..." maxlength="1000"></textarea>
+                                <span class="form-hint">Optional - specific observations</span>
+                                <span class="char-count" id="notes-char-count">0 / 1000</span>
+                            </div>
+                            
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary btn-large" id="submit-checkin-btn">
+                                    <span class="btn-text">Submit Check-in</span>
+                                    <span class="btn-loading" hidden>
+                                        <span class="spinner" aria-hidden="true"></span>
+                                        <span class="loading-text">Saving...</span>
+                                    </span>
+                                </button>
+                            </div>
+                            
+                            <div id="checkin-message" class="message" role="status" aria-live="polite" hidden></div>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- AI Processing Overlay (shown during AI analysis) -->
+                <div id="ai-processing-overlay" class="ai-processing-overlay" role="dialog" aria-modal="true" aria-labelledby="ai-processing-title" hidden>
+                    <div class="ai-processing-content">
+                        <div class="ai-processing-animation">
+                            <span class="brain-icon" aria-hidden="true">🧠</span>
+                            <div class="pulse-ring"></div>
+                        </div>
+                        <h3 id="ai-processing-title">Analyzing Your Check-in</h3>
+                        <p class="ai-processing-message">Our AI is reviewing today's observations...</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill"></div>
+                        </div>
+                        <p class="ai-processing-hint">This usually takes 3-10 seconds</p>
+                    </div>
+                </div>
+
+                <!-- AI Feedback Display (shown after submission) -->
+                <section class="card ai-feedback-section" id="ai-feedback-section" aria-labelledby="ai-feedback-heading" hidden>
+                    <div class="card-header">
+                        <h2 id="ai-feedback-heading">
+                            <span aria-hidden="true">🤖</span> AI Feedback
+                        </h2>
+                        <button type="button" class="btn-close" id="close-feedback" aria-label="Close feedback">×</button>
+                    </div>
+                    <div class="card-body">
+                        <div class="feedback-date" id="feedback-date"></div>
+                        
+                        <div class="risk-badge-container">
+                            <span class="risk-badge" id="feedback-risk-badge" role="status">-</span>
+                        </div>
+                        
+                        <div class="feedback-summary" id="feedback-summary">
+                            <!-- AI summary will be inserted here -->
+                        </div>
+                        
+                        <div class="feedback-suggestions">
+                            <h3>Suggestions</h3>
+                            <ul id="feedback-suggestions-list">
+                                <!-- AI suggestions will be inserted here -->
+                            </ul>
+                        </div>
+                        
+                        <div class="feedback-disclaimer" id="feedback-disclaimer">
+                            <!-- Disclaimer will be inserted here -->
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Right Column: History -->
+            <div class="history-column">
+                <section class="card history-section" aria-labelledby="history-heading">
+                    <div class="card-header">
+                        <h2 id="history-heading">
+                            <span aria-hidden="true">📅</span> Recent Check-ins
+                        </h2>
+                        <button type="button" class="btn-refresh" id="refresh-history" aria-label="Refresh history">
+                            <span class="refresh-icon" aria-hidden="true">🔄</span>
+                        </button>
+                    </div>
+                    
+                    <div class="card-body">
+                        <!-- History Loading State -->
+                        <div id="history-loading" class="loading-state" aria-live="polite">
+                            <div class="loading-skeleton">
+                                <div class="skeleton-item"></div>
+                                <div class="skeleton-item"></div>
+                                <div class="skeleton-item"></div>
+                            </div>
+                            <p class="loading-text">Loading check-in history...</p>
+                        </div>
+                        
+                        <!-- History Empty State -->
+                        <div id="history-empty" class="empty-state" hidden>
+                            <span class="empty-icon" aria-hidden="true">📝</span>
+                            <p class="empty-title">No check-ins yet</p>
+                            <p class="empty-description">Submit your first daily check-in to start tracking cognitive health observations.</p>
+                        </div>
+                        
+                        <!-- History Error State -->
+                        <div id="history-error" class="error-state" hidden>
+                            <span class="error-icon" aria-hidden="true">⚠️</span>
+                            <p class="error-title">Unable to load history</p>
+                            <p class="error-description">Please check your connection and try again.</p>
+                            <button type="button" class="btn btn-secondary" id="retry-history">
+                                Try Again
+                            </button>
+                        </div>
+                        
+                        <!-- History List Container -->
+                        <div id="history-list" class="history-list" hidden>
+                            <!-- Check-in cards will be inserted here via template -->
+                        </div>
+                        
+                        <!-- History Summary Stats -->
+                        <div id="history-stats" class="history-stats" hidden>
+                            <div class="stat-item">
+                                <span class="stat-value" id="stat-total-checkins">0</span>
+                                <span class="stat-label">Total Check-ins</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-value" id="stat-avg-memory">-</span>
+                                <span class="stat-label">Avg Memory</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-value" id="stat-recent-trend">-</span>
+                                <span class="stat-label">Recent Trend</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>&copy; 2025 Elderly Companion. For personal use only. Not a medical device.</p>
+            <p class="footer-links">
+                <a href="#" id="show-help">Help</a> · 
+                <a href="#" id="show-about">About</a>
+            </p>
+        </footer>
+    </div>
+
+    <!-- Detail Modal -->
+    <div class="modal-overlay" id="detail-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modal-title">Check-in Details</h3>
+                <button type="button" class="btn-close" id="close-modal" aria-label="Close modal">×</button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- Detail content will be inserted here via template -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="modal-close-btn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div class="modal-overlay" id="help-modal" role="dialog" aria-modal="true" aria-labelledby="help-modal-title" hidden>
+        <div class="modal modal-large">
+            <div class="modal-header">
+                <h3 id="help-modal-title">How to Use This App</h3>
+                <button type="button" class="btn-close" id="close-help-modal" aria-label="Close help">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="help-content">
+                    <h4>1. Set Up the Elder Profile</h4>
+                    <p>Enter basic information about your loved one. This helps provide context for the AI analysis.</p>
+                    
+                    <h4>2. Complete Daily Check-ins</h4>
+                    <p>Each day, rate the following areas on a 1-5 scale:</p>
+                    <ul>
+                        <li><strong>Memory:</strong> How well they remember things compared to usual</li>
+                        <li><strong>Orientation:</strong> Awareness of time, date, and location</li>
+                        <li><strong>Daily Activities:</strong> Ability to manage routine tasks</li>
+                        <li><strong>Mood:</strong> Overall emotional state</li>
+                    </ul>
+                    
+                    <h4>3. Review AI Feedback</h4>
+                    <p>After each check-in, the AI provides:</p>
+                    <ul>
+                        <li>A risk level assessment (Low, Monitor, or Concerning)</li>
+                        <li>A summary of today's observations</li>
+                        <li>Practical suggestions for caregivers</li>
+                    </ul>
+                    
+                    <h4>Understanding Risk Levels</h4>
+                    <div class="risk-explanation">
+                        <div class="risk-item">
+                            <span class="risk-badge low">Low</span>
+                            <p>Scores are stable, no major concerns</p>
+                        </div>
+                        <div class="risk-item">
+                            <span class="risk-badge monitor">Monitor</span>
+                            <p>Some changes noticed, worth watching</p>
+                        </div>
+                        <div class="risk-item">
+                            <span class="risk-badge concerning">Concerning</span>
+                            <p>Significant changes, consider consulting a doctor</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="help-modal-close-btn">Got it!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Templates for dynamic content -->
+    <template id="history-item-template">
+        <article class="history-item" tabindex="0" role="button">
+            <div class="history-item-header">
+                <span class="history-date"></span>
+                <span class="history-risk-badge"></span>
+            </div>
+            <div class="history-scores">
+                <span class="history-score">
+                    <span class="history-score-icon" aria-hidden="true">🧠</span>
+                    <span class="history-score-label">Memory:</span>
+                    <span class="history-score-value memory-value"></span>
+                </span>
+                <span class="history-score">
+                    <span class="history-score-icon" aria-hidden="true">🧭</span>
+                    <span class="history-score-label">Orient:</span>
+                    <span class="history-score-value orientation-value"></span>
+                </span>
+                <span class="history-score">
+                    <span class="history-score-icon" aria-hidden="true">📋</span>
+                    <span class="history-score-label">Activities:</span>
+                    <span class="history-score-value activities-value"></span>
+                </span>
+                <span class="history-mood"></span>
+            </div>
+            <div class="history-notes-preview"></div>
+        </article>
+    </template>
+
+    <template id="modal-detail-template">
+        <div class="modal-detail-content">
+            <div class="modal-section risk-section">
+                <div class="risk-badge-container">
+                    <span class="risk-badge modal-risk-badge"></span>
+                </div>
+            </div>
+            
+            <div class="modal-section">
+                <h4>Scores</h4>
+                <div class="modal-scores">
+                    <div class="modal-score-item">
+                        <div class="score-circle memory-circle">
+                            <span class="value"></span>
+                        </div>
+                        <div class="label">Memory</div>
+                    </div>
+                    <div class="modal-score-item">
+                        <div class="score-circle orientation-circle">
+                            <span class="value"></span>
+                        </div>
+                        <div class="label">Orientation</div>
+                    </div>
+                    <div class="modal-score-item">
+                        <div class="score-circle activities-circle">
+                            <span class="value"></span>
+                        </div>
+                        <div class="label">Activities</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-section">
+                <h4>Mood</h4>
+                <p class="modal-mood"></p>
+            </div>
+            
+            <div class="modal-section notes-section" hidden>
+                <h4>Notes</h4>
+                <div class="modal-notes"></div>
+            </div>
+            
+            <div class="modal-section">
+                <h4>AI Summary</h4>
+                <div class="feedback-summary modal-summary"></div>
+            </div>
+            
+            <div class="modal-section suggestions-section" hidden>
+                <h4>Suggestions</h4>
+                <ul class="feedback-suggestions modal-suggestions"></ul>
+            </div>
+            
+            <div class="modal-section">
+                <div class="feedback-disclaimer modal-disclaimer"></div>
+            </div>
+        </div>
+    </template>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

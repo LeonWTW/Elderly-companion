@@ -1,0 +1,49 @@
+# Elderly Companion - Docker Compose Configuration
+# Run with: docker-compose up --build
+
+services:
+  # Flask Web Application
+  web:
+    build: .
+    container_name: elderly-companion-web
+    ports:
+      - "8001:5000"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/elderly_companion_db
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - FLASK_ENV=${FLASK_ENV:-production}
+      - SECRET_KEY=${SECRET_KEY:-change-this-in-production}
+    depends_on:
+      mongo:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - elderly-companion-network
+
+  # MongoDB Database
+  mongo:
+    image: mongo:7.0
+    container_name: elderly-companion-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - elderly-companion-network
+
+# Persistent storage for MongoDB data
+volumes:
+  mongo_data:
+    driver: local
+
+# Internal network for services
+networks:
+  elderly-companion-network:
+    driver: bridge
