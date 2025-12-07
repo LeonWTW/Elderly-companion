@@ -48,16 +48,6 @@ cp .env.example .env
 If the `OPENAI_API_KEY` is left blank, the app will still run normally —  
 you will simply see “AI feedback unavailable” instead of full AI analysis.
 
-### What you SHOULD commit to GitHub
-- `.env.example`  
-- `.gitignore` that excludes `.env`  
-
-### What you should NOT commit
-- Any `.env` containing real secrets  
-- Any API keys or credentials  
-
-This ensures graders can run the project without exposing your personal API keys.
-
 ---
 
 ## Steps to Run
