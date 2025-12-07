@@ -33,8 +33,10 @@ A web app that helps caregivers track daily cognitive observations of elderly fa
 This project uses a `.env` file to store configuration values such as the MongoDB connection string and the optional OpenAI API key.
 
 **Important:**  
-The actual `.env` file containing your real API key should **NOT** be committed to GitHub.  
 This repository includes a **`.env.example`** template that contains the required variable names but **no sensitive values**.
+
+This project runs fully without an OpenAI API key — the AI features will simply display “AI feedback unavailable,” but all core functionality (profile, check-ins, history, UI) is fully operational.
+
 
 To set up your environment:
 
@@ -63,7 +65,7 @@ This ensures graders can run the project without exposing your personal API keys
 1. **Clone the repo**
    ```bash
    git clone https://github.com/LeonWTW/Elderly-companion
-   cd elderly-companion
+   cd Elderly-companion
    ```
 
 2. **Set up environment variables**
